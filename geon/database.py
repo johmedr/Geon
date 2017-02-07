@@ -32,7 +32,10 @@ class PostGISDatabase():
     def _getUri(self):
         return self._uri
 
-    getUri = property(_getUri)
+    def _getUser(self):
+        return self._user
 
+    uri = property(_getUri)
+    user = property(_getUser)
 
 
