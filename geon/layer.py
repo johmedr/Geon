@@ -1,15 +1,12 @@
-from qgis.core import *
-from geon.database import PostGISDatabase
-from geon.utils import *
 from PyQt4.QtCore import QFileInfo
+from qgis.core import *
+from geon.utils import *
+from qgis.gui import QgsMapCanvasLayer
 
-app = QgsApplication([], True)
-app.setPrefixPath("/home/yop/anaconda2/pkgs/qgis-2.18.2-py27_0", True)
-app.initQgis()
 
 class VectorLayer(QgsVectorLayer):
-    def __init__(self, postGISDatabase=None, baseName="NewLayer", table=None, subset=None, schema = "public", \
-                  geoColumn="geom", path=None, fileType="ogr", loadDefaultStyleFlag=True):
+    def __init__(self, postGISDatabase=None, baseName="NewLayer", table=None, subset=None, schema="public", \
+                 geoColumn="geom", path=None, fileType="ogr", loadDefaultStyleFlag=True):
 
         if postGISDatabase:
             self._name = "vLayer<" + baseName + ">"
@@ -22,17 +19,42 @@ class VectorLayer(QgsVectorLayer):
         else:
             fileInfo = QFileInfo(path)
             self._name = "vLayer<" + fileInfo.baseName() + ">"
-            QgsVectorLayer.__init__(self, path=path, baseName=fileInfo.baseName(), providerLib=fileType, loadDefaultStyleFlag=loadDefaultStyleFlag)
+            QgsVectorLayer.__init__(self, path=path, baseName=fileInfo.baseName(), providerLib=fileType,
+                                    loadDefaultStyleFlag=loadDefaultStyleFlag)
             if self.isValid():
                 printf(self._name + " successfully loaded.")
             else:
                 printf(self._name + " failed to load.", "!!")
 
+    def __str__(self):
+        return self._name
 
 
-db = PostGISDatabase("NYC")
-vlay = VectorLayer(db, table="nyc_streets")
-vl = VectorLayer(path="/home/yop/Programmation/Python/SIG/workshop-data/nyc_subway_stations.shp")
+class RasterLayer(QgsRasterLayer):
+    def __init__(self, path, *args):
+        fileInfo = QFileInfo(path)
+        self._name = "rLayer<" + fileInfo.baseName() + ">"
+        QgsRasterLayer.__init__(self, path, args)
+
+    def __str__(self):
+        return self._name
+
+class LayerSet(list):
+    def __init__(self, layer=None, name=""):
+        list.__init__(self)
+        self._name = name
+        if layer:
+            self.insert(0, QgsMapCanvasLayer(layer))
+            QgsMapLayerRegistry.instance().addMapLayer(layer)
 
 
+    def addLayer(self, newLayer):
+        self.insert(0, QgsMapCanvasLayer(newLayer))
+        QgsMapLayerRegistry.instance().addMapLayer(newLayer)
+
+    def __str__(self):
+        msg = ""
+        for l in self:
+            msg += str(l) + " "
+        return msg
 

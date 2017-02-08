@@ -29,6 +29,9 @@ class PostGISDatabase():
         result = cursor.fetchall()
         return result
 
+    def __str__(self):
+        return "PostGISDatabase<" + self._uri.connectionInfo() + ">"
+
     def _getUri(self):
         return self._uri
 
