@@ -1,22 +1,28 @@
 from PyQt4.QtCore import SIGNAL, Qt
 from PyQt4.QtGui import QAction, QMainWindow
 from qgis.gui import *
+from geon.layer import LayerSet
+
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, layerSet, extent):
+    def __init__(self, layerSet=None, extent=None):
         QMainWindow.__init__(self)
-
-        self._layerSet = layerSet
-        self._extent = extent
-
         self._canvas = QgsMapCanvas()
         self._canvas.setCanvasColor(Qt.white)
-
-        self._canvas.setExtent(extent)
-        self._canvas.setLayerSet(layerSet)
-
         self.setCentralWidget(self._canvas)
+        self._layerSet = LayerSet()
+
+        if layerSet:
+            self._layerSet = layerSet
+            self._canvas.setLayerSet(layerSet)
+
+            if extent:
+                self._extent = extent
+            else:
+                self._extent = self._layerSet.rawLayers[len(self._layerSet.rawLayers) - 1].extent()
+
+            self._canvas.setExtent(self._extent)
 
         actionZoomIn = QAction("Zoom in", self)
         actionZoomOut = QAction("Zoom out", self)
@@ -45,6 +51,20 @@ class MainWindow(QMainWindow):
 
         self.pan()
 
+    def setLayerSet(self, layerSet, extent=None):
+        self._layerSet = layerSet
+        self._canvas.setLayerSet(layerSet)
+
+        if extent:
+            self._extent = extent
+        else:
+            self._extent = self._layerSet.rawLayers[len(self._layerSet.rawLayers) - 1].extent()
+
+        self._canvas.setExtent(self._extent)
+
+    def addLayerSet(self, layerSet):
+        self._layerSet.appendLayerSet(layerSet)
+
     def zoomIn(self):
         self._canvas.setMapTool(self.toolZoomIn)
 
@@ -72,3 +92,4 @@ class MainWindow(QMainWindow):
     canvas = property(_getCanvas)
     extent = property(_getExtent, _setExtent)
     layerSet = property(_getLayerSet, _setLayerSet)
+
