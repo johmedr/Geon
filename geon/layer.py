@@ -2,6 +2,7 @@ from PyQt4.Qt import QColor
 from PyQt4.QtCore import QFileInfo
 from qgis.core import *
 from qgis.gui import QgsMapCanvasLayer
+
 from geon.utils import *
 
 
@@ -40,8 +41,6 @@ class VectorLayer(QgsVectorLayer):
             self._symbols = self.rendererV2().symbols()
             self._color = self._symbols[0].color()
 
-
-
     def _getColor(self):
         return self._color
 
@@ -51,7 +50,6 @@ class VectorLayer(QgsVectorLayer):
             self._symbols[0].setColor(newColor)
 
     color = property(_getColor, _setColor)
-
 
 
 class RasterLayer(QgsRasterLayer):
@@ -64,7 +62,6 @@ class RasterLayer(QgsRasterLayer):
         else:
             printf(self._name + " successfully loaded.")
 
-
 class LayerSet(list):
     def __init__(self, *layers):
         list.__init__(self)
@@ -75,12 +72,12 @@ class LayerSet(list):
                 self._rawLayers.insert(0, l)
                 QgsMapLayerRegistry.instance().addMapLayer(l)
 
-
     def addLayers(self, *newLayers):
         for l in list(newLayers):
             self.insert(0, QgsMapCanvasLayer(l))
             self._rawLayers.insert(0, l)
             QgsMapLayerRegistry.instance().addMapLayer(l)
+
 
     def appendLayerSet(self, layerSet):
         self = self + layerSet
@@ -95,11 +92,6 @@ class LayerSet(list):
         for l in self:
             msg += str(l) + " "
         return msg
-
-    def __copy__(self):
-        newLayerSet = self
-        newLayerSet._name = self._name
-        return newLayerSet
 
     def _getRawLayers(self):
         return self._rawLayers

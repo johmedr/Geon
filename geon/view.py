@@ -1,27 +1,57 @@
-from geon.layer import LayerSet
 from geon.guiutils import *
+from copy import *
+
+
+class GlobalCanvas(QgsMapCanvas):
+    def __init__(self):
+        self._layerSet = None
+        self._displayedSet = None
+        QgsMapCanvas.__init__(self)
+
+    def setLayerSet(self, layerSet):
+        self._layerSet = layerSet
+        self._displayedSet = copy(self._layerSet)
+        QgsMapCanvas.setLayerSet(self, self._displayedSet)
+
+    def hideLayer(self, layer):
+        self._displayedSet.remove(layer)
+        QgsMapCanvas.setLayerSet(self, self._displayedSet)
+        self.refresh()
+
+    def showLayer(self, layer):
+        self._displayedSet.insert(self._layerSet.index(layer), layer)
+        QgsMapCanvas.setLayerSet(self, self._displayedSet)
+        self.refresh()
+
+    def moveLayerUp(self, layer):
+        newIndex = self._displayedSet.index(layer) - 1
+        if newIndex >= 0:
+            self._displayedSet.remove(layer)
+            self._displayedSet.insert(newIndex, layer)
+            QgsMapCanvas.setLayerSet(self, self._displayedSet)
+            self.refresh()
+
+    def moveLayerDown(self, layer):
+        newIndex = self._displayedSet.index(layer) + 1
+        if newIndex < len(self._displayedSet):
+            self._displayedSet.remove(layer)
+            self._displayedSet.insert(newIndex, layer)
+            QgsMapCanvas.setLayerSet(self, self._displayedSet)
+            self.refresh()
 
 class MainWindow(QMainWindow):
-    def __init__(self, layerSet=None, extent=None):
+    def __init__(self, layerSet):
         QMainWindow.__init__(self)
         self.showMaximized()
-        self._canvas = QgsMapCanvas()
+        self._canvas = GlobalCanvas()
         self._canvas.setCanvasColor(Qt.white)
         self.setCentralWidget(self._canvas)
-        self._layerSet = LayerSet()
 
-        if layerSet:
-            self._layerSet = layerSet
-            self._canvas.setLayerSet(layerSet)
+        self._layerSet = layerSet
+        self._canvas.setLayerSet(layerSet)
 
-            if extent:
-                self._extent = extent
-            else:
-                self._extent = self._layerSet.rawLayers[len(self._layerSet.rawLayers) - 1].extent()
-
-            self._canvas.setExtent(self._extent)
-
-
+        self._extent = self._layerSet.rawLayers[len(self._layerSet.rawLayers) - 1].extent()
+        self._canvas.setExtent(self._extent)
 
         actionZoomIn = QAction("Zoom in", self)
         actionZoomOut = QAction("Zoom out", self)
@@ -81,14 +111,11 @@ class MainWindow(QMainWindow):
     def zoomOut(self):
         self._canvas.setMapTool(self.toolZoomOut)
 
-
     def pan(self):
         self._canvas.setMapTool(self.toolPan)
 
-
     def drawRectangle(self):
         self._canvas.setMapTool(self.toolRectangle)
-
 
     def _getCanvas(self):
         return self._canvas
@@ -98,6 +125,7 @@ class MainWindow(QMainWindow):
 
     def _setLayerSet(self, newLayerSet):
         self._layerSet = newLayerSet
+        self._canvas.setLayerSet(self._layerSet)
 
     def _getExtent(self):
         return self._extent
