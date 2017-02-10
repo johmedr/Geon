@@ -6,7 +6,7 @@ from geon.utils import *
 
 
 class VectorLayer(QgsVectorLayer):
-    def __init__(self, postGISDatabase=None,  baseName=None, table=None, subset=None, schema="public", \
+    def __init__(self, postGISDatabase=None,  baseName=None, table=None, subset=None, schema="public",
                  geoColumn="geom", path=None, fileType="ogr", loadDefaultStyleFlag=True):
 
         # Parameters

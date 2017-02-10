@@ -23,6 +23,7 @@ class PostGISDatabase():
             printf("!!", "Database error : " + e)
             self._isConnected = False
 
+
         if self._isConnected:
             self._cursor = self._con.cursor()
 
