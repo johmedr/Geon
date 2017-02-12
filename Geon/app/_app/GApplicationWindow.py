@@ -1,49 +1,14 @@
-from geon.guiutils import *
-from copy import *
+from PyQt4.Qt import SIGNAL, QMainWindow, Qt, QAction
+from qgis.gui import QgsMapToolPan, QgsMapToolZoom
+
+from Geon.gui import GMainCanvas, GLayerDocker
 
 
-class GlobalCanvas(QgsMapCanvas):
-    def __init__(self):
-        self._layerSet = None
-        self._displayedSet = None
-        QgsMapCanvas.__init__(self)
-
-    def setLayerSet(self, layerSet):
-        self._layerSet = layerSet
-        self._displayedSet = copy(self._layerSet)
-        QgsMapCanvas.setLayerSet(self, self._displayedSet)
-
-    def hideLayer(self, layer):
-        self._displayedSet.remove(layer)
-        QgsMapCanvas.setLayerSet(self, self._displayedSet)
-        self.refresh()
-
-    def showLayer(self, layer):
-        self._displayedSet.insert(self._layerSet.index(layer), layer)
-        QgsMapCanvas.setLayerSet(self, self._displayedSet)
-        self.refresh()
-
-    def moveLayerUp(self, layer):
-        newIndex = self._displayedSet.index(layer) - 1
-        if newIndex >= 0:
-            self._displayedSet.remove(layer)
-            self._displayedSet.insert(newIndex, layer)
-            QgsMapCanvas.setLayerSet(self, self._displayedSet)
-            self.refresh()
-
-    def moveLayerDown(self, layer):
-        newIndex = self._displayedSet.index(layer) + 1
-        if newIndex < len(self._displayedSet):
-            self._displayedSet.remove(layer)
-            self._displayedSet.insert(newIndex, layer)
-            QgsMapCanvas.setLayerSet(self, self._displayedSet)
-            self.refresh()
-
-class MainWindow(QMainWindow):
+class GApplicationWindow(QMainWindow):
     def __init__(self, layerSet):
         QMainWindow.__init__(self)
-        self.showMaximized()
-        self._canvas = GlobalCanvas()
+        self.showFullScreen()
+        self._canvas = GMainCanvas()
         self._canvas.setCanvasColor(Qt.white)
         self.setCentralWidget(self._canvas)
 
@@ -68,13 +33,13 @@ class MainWindow(QMainWindow):
         self.connect(actionPan, SIGNAL("triggered()"), self.pan)
         self.connect(actionRectangle, SIGNAL("triggered()"), self.drawRectangle)
 
-        self.toolbar = self.addToolBar("_canvas actions")
-        self.toolbar.setMovable(False)
-        self.toolbar.addAction(actionZoomIn)
-        self.toolbar.addAction(actionZoomOut)
-        self.toolbar.addAction(actionPan)
-        self.toolbar.addSeparator()
-        self.toolbar.addAction(actionRectangle)
+        # self.toolbar = self.addToolBar("_canvas actions")
+        # self.toolbar.setMovable(False)
+        # self.toolbar.addAction(actionZoomIn)
+        # self.toolbar.addAction(actionZoomOut)
+        # self.toolbar.addAction(actionPan)
+        # self.toolbar.addSeparator()
+        # self.toolbar.addAction(actionRectangle)
 
         # create the map tools
         self.toolPan = QgsMapToolPan(self._canvas)
@@ -83,12 +48,10 @@ class MainWindow(QMainWindow):
         self.toolZoomIn.setAction(actionZoomIn)
         self.toolZoomOut = QgsMapToolZoom(self._canvas, True)  # true = out
         self.toolZoomOut.setAction(actionZoomOut)
-        self.toolRectangle = RectangleMapTool(self._canvas)
-        self.toolRectangle.setAction(actionRectangle)
 
         self.pan()
 
-        self.dock = LayerDocker(self.centralWidget(), layerSet, self._canvas)
+        self.dock = GLayerDocker(self.centralWidget(), layerSet, self._canvas)
         self.addDockWidget(Qt.LeftDockWidgetArea, self.dock)
 
     def setLayerSet(self, layerSet, extent=None):
@@ -136,4 +99,3 @@ class MainWindow(QMainWindow):
     canvas = property(_getCanvas)
     extent = property(_getExtent, _setExtent)
     layerSet = property(_getLayerSet, _setLayerSet)
-

@@ -1,12 +1,15 @@
-from psycopg2 import connect, DatabaseError, ProgrammingError
-from qgis.core import QgsDataSourceURI
-from PyQt4.QtCore import QFileInfo
-from geon.utils import *
 from os import system
 
+from PyQt4.QtCore import QFileInfo
+from psycopg2 import connect, DatabaseError, ProgrammingError
+from qgis.core import QgsDataSourceURI
 
-class PostGISDatabase():
-    def __init__(self, database=defaultDatabase, host=defaultHost, port=defaultPort, user=defaultUser, passwd=defaultPassword):
+from Geon.utils import *
+
+
+class GPostGISDatabase:
+    def __init__(self, database=DEFAULT_DATABASE, host=DEFAULT_HOST, port=DEFAULT_PORT, user=DEFAULT_USER,
+                 passwd=DEFAULT_PASSWORD):
         self._host = host
         self._port = port
         self._database = database
@@ -17,18 +20,19 @@ class PostGISDatabase():
         self._isConnected = True
         self._cursor = None
         try:
-            self._con = connect(host=self._host, port=self._port, database=self._database, user=self._user, password=self._passwd)
+            self._con = connect(host=self._host, port=self._port, database=self._database, user=self._user,
+                                password=self._passwd)
             printf("Database " + self._database + " connected.")
         except DatabaseError, e:
-            printf("!!", "Database error : " + e)
+            printf("!!", "Database error : " + str(e))
             self._isConnected = False
-
 
         if self._isConnected:
             self._cursor = self._con.cursor()
 
     def sqlRequest(self, sqlString):
         self._cursor.execute(sqlString)
+        result = None
         try:
             result = self._cursor.fetchall()
         except ProgrammingError, e:
@@ -39,7 +43,8 @@ class PostGISDatabase():
     def existsTable(self, tableName):
         exists = True
         try:
-            self._cursor.execute("select exists(select * from information_schema.tables where table_name=%s)", (tableName,))
+            self._cursor.execute("select exists(select * from information_schema.tables where table_name=%s)",
+                                 (tableName,))
             exists = self._cursor.fetchone()[0]
         except ProgrammingError, e:
             printf(e, "EE")
@@ -60,8 +65,6 @@ class PostGISDatabase():
         else:
             printf(fileInfo.baseName() + " exists in " + str(self), "EE")
 
-
-
     def __del__(self):
         if self._con:
             self._con.close()
@@ -77,5 +80,3 @@ class PostGISDatabase():
 
     uri = property(_getUri)
     user = property(_getUser)
-
-
