@@ -1,15 +1,15 @@
 from qgis.core import QgsApplication
 
-from const import *
+from GConst import *
 
 
-def initGeon():
+def GInit():
     app = QgsApplication([], True)
     app.setPrefixPath(QGIS_PATH, True)
     app.initQgis()
     return app
 
 
-def printf(msg, flag="Ok"):
+def GPrint(msg, flag="Ok"):
     if VERBOSE:
         print "[" + flag + "] " + str(msg)

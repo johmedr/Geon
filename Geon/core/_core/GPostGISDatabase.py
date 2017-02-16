@@ -22,9 +22,9 @@ class GPostGISDatabase:
         try:
             self._con = connect(host=self._host, port=self._port, database=self._database, user=self._user,
                                 password=self._passwd)
-            printf("Database " + self._database + " connected.")
+            GPrint("Database " + self._database + " connected.")
         except DatabaseError, e:
-            printf("!!", "Database error : " + str(e))
+            GPrint("!!", "Database error : " + str(e))
             self._isConnected = False
 
         if self._isConnected:
@@ -36,7 +36,7 @@ class GPostGISDatabase:
         try:
             result = self._cursor.fetchall()
         except ProgrammingError, e:
-            printf(e, "EE")
+            GPrint(e, "EE")
 
         return result
 
@@ -47,7 +47,7 @@ class GPostGISDatabase:
                                  (tableName,))
             exists = self._cursor.fetchone()[0]
         except ProgrammingError, e:
-            printf(e, "EE")
+            GPrint(e, "EE")
         return exists
 
     def loadShapefile(self, path, preserveSqlFile=False):
@@ -60,10 +60,10 @@ class GPostGISDatabase:
             if not preserveSqlFile:
                 system("rm -f " + sqlFilePath)
 
-            printf("Shapefile " + fileInfo.baseName() + ".shp successfully loaded in database " + str(self))
+            GPrint("Shapefile " + fileInfo.baseName() + ".shp successfully loaded in database " + str(self))
 
         else:
-            printf(fileInfo.baseName() + " exists in " + str(self), "EE")
+            GPrint(fileInfo.baseName() + " exists in " + str(self), "EE")
 
     def __del__(self):
         if self._con:

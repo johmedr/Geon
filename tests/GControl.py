@@ -1,16 +1,18 @@
-from PyQt4.Qt import SIGNAL
+import sip
+
+for api in ["QDate", "QDateTime", "QString", "QTextStream", "QTime", "QUrl", "QVariant"]:
+    sip.setapi(api, 2)
 
 from Geon.app import GApplicationWindow
 from Geon.core import *
 from Geon.utils import *
+from PyQt4.Qt import SIGNAL
 
-app = initGeon()
+app = GInit()
 
 layerset = GLayerSet()
 
 db = GPostGISDatabase()
-db.loadShapefile("/home/yop/Programmation/Python/SIG/workshop-data/nyc_census_blocks.shp")
-db.loadShapefile("/home/yop/Programmation/Python/SIG/workshop-data/nyc_neighborhoods.shp")
 
 basemap = GRasterLayer("/home/yop/Programmation/Python/SIG/workshop-data/nyc_geo.tif")
 

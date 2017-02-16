@@ -10,6 +10,6 @@ class GRasterLayer(QgsRasterLayer):
         self._name = "rLayer<" + fileInfo.baseName() + ">"
         QgsRasterLayer.__init__(self, path, *args)
         if not self.isValid():
-            printf(self._name + " failed to load.", "!!")
+            GPrint(self._name + " failed to load.", "!!")
         else:
-            printf(self._name + " successfully loaded.")
+            GPrint(self._name + " successfully loaded.")

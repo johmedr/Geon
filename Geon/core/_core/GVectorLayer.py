@@ -31,9 +31,9 @@ class GVectorLayer(QgsVectorLayer):
                                     loadDefaultStyleFlag=loadDefaultStyleFlag)
 
         if not self.isValid():
-            printf(self._name + " failed to load.", "!!")
+            GPrint(self._name + " failed to load.", "!!")
         else:
-            printf(self._name + " successfully loaded.")
+            GPrint(self._name + " successfully loaded.")
 
             # Deal with color param
             self._symbols = self.rendererV2().symbols()
