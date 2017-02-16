@@ -1,5 +1,5 @@
-from PyQt4.Qt import SIGNAL, QMainWindow, Qt, QAction
-from qgis.gui import QgsMapToolPan, QgsMapToolZoom
+from PyQt4.Qt import QMainWindow, Qt
+from qgis.gui import QgsMapToolPan
 
 from Geon.gui import GMainCanvas, GLayerDocker
 
@@ -18,41 +18,11 @@ class GApplicationWindow(QMainWindow):
         self._extent = self._layerSet.rawLayers[len(self._layerSet.rawLayers) - 1].extent()
         self._canvas.setExtent(self._extent)
 
-        actionZoomIn = QAction("Zoom in", self)
-        actionZoomOut = QAction("Zoom out", self)
-        actionPan = QAction("Pan", self)
-        actionRectangle = QAction("Draw rectangle", self)
-
-        actionZoomIn.setCheckable(True)
-        actionZoomOut.setCheckable(True)
-        actionPan.setCheckable(True)
-        actionRectangle.setCheckable(True)
-
-        self.connect(actionZoomIn, SIGNAL("triggered()"), self.zoomIn)
-        self.connect(actionZoomOut, SIGNAL("triggered()"), self.zoomOut)
-        self.connect(actionPan, SIGNAL("triggered()"), self.pan)
-        self.connect(actionRectangle, SIGNAL("triggered()"), self.drawRectangle)
-
-        # self.toolbar = self.addToolBar("_canvas actions")
-        # self.toolbar.setMovable(False)
-        # self.toolbar.addAction(actionZoomIn)
-        # self.toolbar.addAction(actionZoomOut)
-        # self.toolbar.addAction(actionPan)
-        # self.toolbar.addSeparator()
-        # self.toolbar.addAction(actionRectangle)
-
-        # create the map tools
-        self.toolPan = QgsMapToolPan(self._canvas)
-        self.toolPan.setAction(actionPan)
-        self.toolZoomIn = QgsMapToolZoom(self._canvas, False)  # false = in
-        self.toolZoomIn.setAction(actionZoomIn)
-        self.toolZoomOut = QgsMapToolZoom(self._canvas, True)  # true = out
-        self.toolZoomOut.setAction(actionZoomOut)
-
+        self._toolPan = QgsMapToolPan(self._canvas)
         self.pan()
 
-        self.dock = GLayerDocker(self.centralWidget(), layerSet, self._canvas)
-        self.addDockWidget(Qt.LeftDockWidgetArea, self.dock)
+        self._layerDock = GLayerDocker(self.centralWidget(), layerSet, self._canvas)
+        self.addDockWidget(Qt.LeftDockWidgetArea, self._layerDock)
 
     def setLayerSet(self, layerSet, extent=None):
         self._layerSet = layerSet
@@ -68,17 +38,8 @@ class GApplicationWindow(QMainWindow):
     def addLayerSet(self, layerSet):
         self._layerSet.appendLayerSet(layerSet)
 
-    def zoomIn(self):
-        self._canvas.setMapTool(self.toolZoomIn)
-
-    def zoomOut(self):
-        self._canvas.setMapTool(self.toolZoomOut)
-
     def pan(self):
-        self._canvas.setMapTool(self.toolPan)
-
-    def drawRectangle(self):
-        self._canvas.setMapTool(self.toolRectangle)
+        self._canvas.setMapTool(self._toolPan)
 
     def _getCanvas(self):
         return self._canvas
