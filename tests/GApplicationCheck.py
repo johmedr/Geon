@@ -22,6 +22,12 @@ homicides = GVectorLayer(db, table="nyc_homicides")
 census = GVectorLayer(db, table="nyc_census_blocks")
 neighborhoods = GVectorLayer(db, table="nyc_neighborhoods")
 
+tables = []
+ans = db.sqlRequest("select relname from pg_stat_user_tables WHERE schemaname='public' and relname!='spatial_ref_sys'")
+for a in ans:
+    tables.append(a[0])
+print tables
+
 layerset.addLayers(census, neighborhoods, subways, homicides, streets)
 layerset.addBasemap(basemap)
 

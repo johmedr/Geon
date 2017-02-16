@@ -50,6 +50,14 @@ class GPostGISDatabase:
             GPrint(e, "EE")
         return exists
 
+    def tables(self):
+        tables = []
+        ans = self.sqlRequest("SELECT relname FROM pg_stat_user_tables \
+                                WHERE schemaname='public' AND relname!='spatial_ref_sys'")
+        for a in ans:
+            tables.append(a[0])
+        return tables
+
     def loadShapefile(self, path, preserveSqlFile=False):
         fileInfo = QFileInfo(path)
         if not self.existsTable(fileInfo.baseName()):
