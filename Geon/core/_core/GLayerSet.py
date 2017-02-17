@@ -23,7 +23,7 @@ class GLayerSet(list):
             QgsMapLayerRegistry.instance().addMapLayer(l)
 
     def appendLayerSet(self, layerSet):
-        self = self + layerSet
+        self.__add__(layerSet)
 
     def addBasemap(self, basemap):
         self._rawLayers.append(basemap)

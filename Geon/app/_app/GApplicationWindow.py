@@ -5,6 +5,7 @@ from Geon.gui import GMainCanvas, GAppLayerDocker
 
 
 class GApplicationWindow(QMainWindow):
+    # TODO Review class to allow it to be instantiated by the GEditor
     def __init__(self, layerSet):
         QMainWindow.__init__(self)
         self.showFullScreen()

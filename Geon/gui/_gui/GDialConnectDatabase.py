@@ -4,7 +4,7 @@ from Geon.utils import DEFAULT_HOST, DEFAULT_PORT, DEFAULT_DATABASE, DEFAULT_USE
 
 
 class GDialConnectDatabase(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, parent):
         QDialog.__init__(self, parent)
 
         self.setWindowTitle(self.tr("Connect"))
@@ -20,7 +20,7 @@ class GDialConnectDatabase(QDialog):
         self._userLine.setText(DEFAULT_USER)
         self._passwordLine = QLineEdit(self)
         self._passwordLine.setText(DEFAULT_PASSWORD)
-        validateButton = QPushButton(self.tr("Validate"), self)
+        validateButton = QPushButton(self.tr("Ok"), self)
 
         self.connect(validateButton, SIGNAL("clicked()"), self.validate)
 

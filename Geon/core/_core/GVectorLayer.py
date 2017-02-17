@@ -10,14 +10,17 @@ class GVectorLayer(QgsVectorLayer):
 
         # Parameters
         self._name = ""
+        self._baseName = ""
         self._symbols = None
         self._color = QColor()
 
         # Query data from PostGIS database
         if postGISDatabase:
             if baseName:
+                self._baseName = baseName
                 self._name = "vLayer<" + baseName + ">"
             else:
+                self._baseName = table
                 self._name = "vLayer<" + table + ">"
 
             postGISDatabase.uri.setDataSource(schema, table, geoColumn, subset)
@@ -27,6 +30,7 @@ class GVectorLayer(QgsVectorLayer):
         else:
             fileInfo = QFileInfo(path)
             self._name = "vLayer<" + fileInfo.baseName() + ">"
+            self._baseName = fileInfo.baseName()
             QgsVectorLayer.__init__(self, path=path, baseName=fileInfo.baseName(), providerLib=fileType,
                                     loadDefaultStyleFlag=loadDefaultStyleFlag)
 
@@ -46,5 +50,8 @@ class GVectorLayer(QgsVectorLayer):
         self._color = newColor
         if self.isValid():
             self._symbols[0].setColor(newColor)
+
+    def name(self):
+        return self._baseName
 
     color = property(_getColor, _setColor)

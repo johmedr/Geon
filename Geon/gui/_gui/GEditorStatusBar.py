@@ -6,3 +6,5 @@ class GEditorStatusBar(QStatusBar):
         QStatusBar.__init__(self, parent)
 
         self.showMessage("Not connected to a database")
+
+        # TODO Create "rolling messages" functionality
