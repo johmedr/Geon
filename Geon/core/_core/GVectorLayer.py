@@ -1,32 +1,39 @@
 from PyQt4.Qt import QColor, QFileInfo
 from qgis.core import QgsVectorLayer
 
+from GLayer import GLayer
 from Geon.utils import *
 
 
-class GVectorLayer(QgsVectorLayer):
+class GVectorLayer(QgsVectorLayer, GLayer):
     def __init__(self, postGISDatabase=None, baseName=None, table=None, subset=None, schema="public",
                  geoColumn="geom", path=None, fileType="ogr", loadDefaultStyleFlag=True):
 
         # Parameters
         self._name = ""
+        self._baseName = ""
         self._symbols = None
         self._color = QColor()
 
         # Query data from PostGIS database
         if postGISDatabase:
             if baseName:
-                self._name = "vLayer<" + baseName + ">"
+                name = "vLayer<" + baseName + ">"
             else:
-                self._name = "vLayer<" + table + ">"
+                baseName = table
+                name = "vLayer<" + table + ">"
 
+            GLayer.__init__(self, name=name, baseName=baseName)
             postGISDatabase.uri.setDataSource(schema, table, geoColumn, subset)
             QgsVectorLayer.__init__(self, postGISDatabase.uri.uri(), self._name, postGISDatabase.user)
 
         # Query data from file
         else:
             fileInfo = QFileInfo(path)
-            self._name = "vLayer<" + fileInfo.baseName() + ">"
+            name = "vLayer<" + fileInfo.baseName() + ">"
+            baseName = fileInfo.baseName()
+
+            GLayer.__init__(self, name=name, baseName=baseName)
             QgsVectorLayer.__init__(self, path=path, baseName=fileInfo.baseName(), providerLib=fileType,
                                     loadDefaultStyleFlag=loadDefaultStyleFlag)
 

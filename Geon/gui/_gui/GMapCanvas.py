@@ -3,14 +3,17 @@ from qgis.gui import QgsMapCanvas
 from Geon.core import GLayerSet
 
 
-class GMainCanvas(QgsMapCanvas):
-    def __init__(self):
-        self._layerSet = None
+class GMapCanvas(QgsMapCanvas):
+    def __init__(self, parent=None, layerSet=None):
+        self._layerSet = layerSet
         self._displayDict = dict()
-        QgsMapCanvas.__init__(self)
+        QgsMapCanvas.__init__(self, parent)
+        if layerSet:
+            self.setExtent(self._layerSet.rawLayers[len(self._layerSet.rawLayers) - 1].extent())
 
     def setLayerSet(self, layerSet):
         self._layerSet = layerSet
+        self.setExtent(self._layerSet.rawLayers[len(self._layerSet.rawLayers) - 1].extent())
         for l in layerSet:
             self._displayDict.update({l: True})
         self.refresh()

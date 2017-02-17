@@ -1,14 +1,15 @@
 from PyQt4.Qt import QMainWindow, Qt
 from qgis.gui import QgsMapToolPan
 
-from Geon.gui import GMainCanvas, GAppLayerDocker
+from Geon.gui import GMapCanvas, GAppLayerDocker
 
 
 class GApplicationWindow(QMainWindow):
+    # TODO Review class to allow it to be instantiated by the GEditor
     def __init__(self, layerSet):
         QMainWindow.__init__(self)
         self.showFullScreen()
-        self._canvas = GMainCanvas()
+        self._canvas = GMapCanvas()
         self._canvas.setCanvasColor(Qt.white)
         self.setCentralWidget(self._canvas)
 

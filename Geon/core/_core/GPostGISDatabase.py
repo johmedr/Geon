@@ -23,6 +23,7 @@ class GPostGISDatabase:
         try:
             self._con = connect(host=self._host, port=self._port, database=self._database, user=self._user,
                                 password=self._passwd)
+            self._cursor = self._con.cursor()
             GPrint("Database " + self._database + " connected.")
             self._isConnected = True
         except DatabaseError, self._error:
@@ -42,7 +43,6 @@ class GPostGISDatabase:
             result = self._cursor.fetchall()
         except ProgrammingError, e:
             GPrint(e, "EE")
-
         return result
 
     def existsTable(self, tableName):
@@ -86,6 +86,9 @@ class GPostGISDatabase:
 
     def _getUser(self):
         return self._user
+
+    def getName(self):
+        return self._database
 
     uri = property(_getUri)
     user = property(_getUser)
