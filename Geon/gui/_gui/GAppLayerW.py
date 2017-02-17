@@ -3,7 +3,7 @@ from PyQt4.QtCore import Qt, SIGNAL
 from qgis.gui import QgsMapCanvas
 
 
-class GLayerWidget(QgsMapCanvas):
+class GAppLayerW(QgsMapCanvas):
     def __init__(self, layer, rawLayer, linkedCanvas, dock):
 
         # Canvas params

@@ -17,18 +17,23 @@ class GPostGISDatabase:
         self._passwd = passwd
         self._uri = QgsDataSourceURI()
         self._uri.setConnection(self._host, self._port, self._database, self._user, self._passwd)
-        self._isConnected = True
+        self._isConnected = False
         self._cursor = None
+        self._error = None
         try:
             self._con = connect(host=self._host, port=self._port, database=self._database, user=self._user,
                                 password=self._passwd)
             GPrint("Database " + self._database + " connected.")
-        except DatabaseError, e:
-            GPrint("!!", "Database error : " + str(e))
+            self._isConnected = True
+        except DatabaseError, self._error:
             self._isConnected = False
+            GPrint("Database error : " + str(self._error), "!!")
 
-        if self._isConnected:
-            self._cursor = self._con.cursor()
+    def getError(self):
+        return self._error
+
+    def isConnected(self):
+        return self._isConnected
 
     def sqlRequest(self, sqlString):
         self._cursor.execute(sqlString)
@@ -72,10 +77,6 @@ class GPostGISDatabase:
 
         else:
             GPrint(fileInfo.baseName() + " exists in " + str(self), "EE")
-
-    def __del__(self):
-        if self._con:
-            self._con.close()
 
     def __str__(self):
         return "PostGISDatabase<" + self._uri.connectionInfo() + ">"

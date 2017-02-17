@@ -1,12 +1,12 @@
 from PyQt4.Qt import QDockWidget, QWidget, QVBoxLayout
 from PyQt4.QtCore import Qt, SIGNAL
 
+from GAppLayerW import GAppLayerW
 from GDocker import GDocker
-from GLayerWidget import GLayerWidget
 
 
 # Class for layer storage
-class GLayerDocker(GDocker):
+class GAppLayerDocker(GDocker):
     def __init__(self, parent=None, layerSet=None, linkedCanvas=None):
         GDocker.__init__(self, parent)
 
@@ -32,16 +32,10 @@ class GLayerDocker(GDocker):
         # Store the canvas of layers
         self._layerPortfolio = []
 
-        # Create up button
-        # self._buttonU = QToolButton(self._container)
-        # self._buttonU.setArrowType(Qt.UpArrow)
-        # self._buttonU.setFixedWidth(self._container.width())
-        # self._layout.addWidget(self._buttonU)
-
         # For each layer in layer set :
         for i in range(0, len(layerSet)):
             # Create a new widget
-            layerWidget = GLayerWidget(layerSet[i], layerSet.rawLayers[i], linkedCanvas, self)
+            layerWidget = GAppLayerW(layerSet[i], layerSet.rawLayers[i], linkedCanvas, self)
 
             # Set its properties
             layerWidget.setMinimumWidth(widgetsWidth)
@@ -52,12 +46,6 @@ class GLayerDocker(GDocker):
             # Add it to portfolio and display it
             self._layerPortfolio.append(layerWidget)
             self._layout.addWidget(layerWidget)
-
-            # Create down button
-            # self._buttonD = QToolButton(self._container)
-            # self._buttonD.setArrowType(Qt.DownArrow)
-            # self._buttonD.setFixedWidth(self._container.width())
-            # self._layout.addWidget(self._buttonD)
 
     def moveWidgetUp(self, widget):
         newIndex = self._layout.indexOf(widget) - 1

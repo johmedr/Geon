@@ -1,7 +1,7 @@
 from PyQt4.Qt import QMainWindow, Qt
 from qgis.gui import QgsMapToolPan
 
-from Geon.gui import GMainCanvas, GLayerDocker
+from Geon.gui import GMainCanvas, GAppLayerDocker
 
 
 class GApplicationWindow(QMainWindow):
@@ -21,7 +21,7 @@ class GApplicationWindow(QMainWindow):
         self._toolPan = QgsMapToolPan(self._canvas)
         self.pan()
 
-        self._layerDock = GLayerDocker(self.centralWidget(), layerSet, self._canvas)
+        self._layerDock = GAppLayerDocker(self.centralWidget(), layerSet, self._canvas)
         self.addDockWidget(Qt.LeftDockWidgetArea, self._layerDock)
 
     def setLayerSet(self, layerSet, extent=None):

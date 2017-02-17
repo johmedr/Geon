@@ -1,4 +1,4 @@
-from GEditorMainWindow import GEditorMainWindow
+from GEditorController import GEditorController
 
 __author__ = 'Johan Medrano'
 __date__ = 'February 2017'

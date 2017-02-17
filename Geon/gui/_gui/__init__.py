@@ -1,4 +1,5 @@
+from GAppLayerDocker import GAppLayerDocker
+from GAppLayerW import GAppLayerW
 from GDocker import GDocker
-from GLayerDocker import GLayerDocker
-from GLayerWidget import GLayerWidget
+from GEditorMainWindow import GEditorMainWindow
 from GMainCanvas import GMainCanvas
